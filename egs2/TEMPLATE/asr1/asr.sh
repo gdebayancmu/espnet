@@ -49,6 +49,8 @@ speed_perturb_factors=  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by
 feats_type=raw       # Feature type (raw or fbank_pitch).
 audio_format=flac    # Audio format: wav, flac, wav.ark, flac.ark  (only in feats_type=raw).
 fs=16k               # Sampling rate.
+win_length=320       # Window Length
+hop_length=160       # Hop Length (Nsh)
 min_wav_duration=0.1 # Minimum duration in second.
 max_wav_duration=20  # Maximum duration in second.
 
@@ -893,11 +895,13 @@ if ! "${skip_train}"; then
         _asr_train_dir="${data_feats}/${train_set}"
         _asr_valid_dir="${data_feats}/${valid_set}"
         log "Stage 10: ASR collect stats: train_set=${_asr_train_dir}, valid_set=${_asr_valid_dir}"
+        log "ASR CONFIG DEB DEB DEB ${asr_config}"
 
         _opts=
         if [ -n "${asr_config}" ]; then
             # To generate the config file: e.g.
             #   % python3 -m espnet2.bin.asr_train --print_config --optim adam
+            log "ASR CONFIG DEB DEB DEB ${asr_config}"
             _opts+="--config ${asr_config} "
         fi
 
@@ -910,7 +914,7 @@ if ! "${skip_train}"; then
                 # "sound" supports "wav", "flac", etc.
                 _type=sound
             fi
-            _opts+="--frontend_conf fs=${fs} "
+            _opts+="--frontend_conf fs=${fs} --frontend_conf win_length=${win_length} --frontend_conf hop_length=${hop_length} "
         else
             _scp=feats.scp
             _type=kaldi_ark
@@ -1012,7 +1016,7 @@ if ! "${skip_train}"; then
                 _type=sound
             fi
             _fold_length="$((asr_speech_fold_length * 100))"
-            _opts+="--frontend_conf fs=${fs} "
+            _opts+="--frontend_conf fs=${fs} --frontend_conf win_length=${win_length} --frontend_conf hop_length=${hop_length} "
         else
             _scp=feats.scp
             _type=kaldi_ark

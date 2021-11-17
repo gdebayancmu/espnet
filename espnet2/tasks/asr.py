@@ -389,6 +389,10 @@ class ASRTask(AbsTask):
         if args.input_size is None:
             # Extract features in the model
             frontend_class = frontend_choices.get_class(args.frontend)
+            print("DEB OPOPOP frontend conf is", args.frontend_conf)
+            args.frontend_conf['hop_length'] = int(args.frontend_conf['hop_length'])
+            args.frontend_conf['win_length'] = int(args.frontend_conf['win_length'])
+
             frontend = frontend_class(**args.frontend_conf)
             input_size = frontend.output_size()
         else:
