@@ -46,6 +46,7 @@ local_data_opts= # The options given to local/data.sh.
 speed_perturb_factors=  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
 
 # Feature extraction related
+frontend=wavelet
 feats_type=raw       # Feature type (raw or fbank_pitch).
 audio_format=flac    # Audio format: wav, flac, wav.ark, flac.ark  (only in feats_type=raw).
 fs=16k               # Sampling rate.
@@ -914,7 +915,7 @@ if ! "${skip_train}"; then
                 # "sound" supports "wav", "flac", etc.
                 _type=sound
             fi
-            _opts+="--frontend_conf fs=${fs} --frontend_conf win_length=${win_length} --frontend_conf hop_length=${hop_length} "
+            _opts+="--frontend_conf fs=${fs} --frontend_conf win_length=${win_length} --frontend_conf hop_length=${hop_length} --frontend=${frontend} "
         else
             _scp=feats.scp
             _type=kaldi_ark
@@ -1016,7 +1017,7 @@ if ! "${skip_train}"; then
                 _type=sound
             fi
             _fold_length="$((asr_speech_fold_length * 100))"
-            _opts+="--frontend_conf fs=${fs} --frontend_conf win_length=${win_length} --frontend_conf hop_length=${hop_length} "
+            _opts+="--frontend_conf fs=${fs} --frontend_conf win_length=${win_length} --frontend_conf hop_length=${hop_length} --frontend=${frontend} "
         else
             _scp=feats.scp
             _type=kaldi_ark

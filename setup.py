@@ -26,6 +26,8 @@ requirements = {
         "torch>=1.3.0",
         "torch_complex",
         "nltk>=3.4.5",
+        "cupy-cuda102",
+        "ssqueezepy",
         # ASR
         "sentencepiece",
         "ctc-segmentation<1.8,>=1.6.6",
