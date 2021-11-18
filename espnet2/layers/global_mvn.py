@@ -39,6 +39,8 @@ class GlobalMVN(AbsNormalize, InversibleInterface):
 
         self.stats_file = stats_file
         stats = np.load(stats_file)
+        print('self.stats file is ', self.stats_file)
+        print('stats is ', stats)
         if isinstance(stats, np.ndarray):
             # Kaldi like stats
             count = stats[0].flatten()[-1]
@@ -52,9 +54,15 @@ class GlobalMVN(AbsNormalize, InversibleInterface):
             mean = sum_v / count
             var = sum_square_v / count - mean * mean
         std = np.sqrt(np.maximum(var, eps))
-
-        self.register_buffer("mean", torch.from_numpy(mean))
-        self.register_buffer("std", torch.from_numpy(std))
+        
+        print('mean is', mean)
+        print('std is ', std)
+        mean_torch = torch.from_numpy(np.array(mean))
+        print('mean_torch', mean_torch)
+        std_torch = torch.from_numpy(np.array(std))
+        print('mean std', std_torch)
+        self.register_buffer("mean", mean_torch)
+        self.register_buffer("std", std_torch)
 
     def extra_repr(self):
         return (

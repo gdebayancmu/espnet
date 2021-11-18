@@ -50,6 +50,7 @@ class WaveletFrontEnd(AbsFrontend):
         param window_length: window length (in samples)
         param overlap_length: overlapping length (in samples)
         """
+        signal = signal.cpu()
         signal_len = signal.shape[0]
         num_frames = np.ceil(signal_len / Nsh)
         framed_signal = np.zeros((int(num_frames), Nw))
@@ -72,8 +73,8 @@ class WaveletFrontEnd(AbsFrontend):
     ) -> Tuple[torch.Tensor, torch.Tensor]:
 
         # print('----In Forward WAVELET------')
-        print('input', input.shape)
-        print('input_lengths', input_lengths)
+        # print('input', input.shape)
+        # print('input_lengths', input_lengths)
 
         batch_size = input.shape[0]
 
@@ -92,7 +93,7 @@ class WaveletFrontEnd(AbsFrontend):
         for batch in range(0, batch_size):
             framed_signal = self.frame_with_overlap(input[batch], Nw=self.win_length, Nsh=self.hop_length)
             Wxo, dWx =  cwt(framed_signal, fs=self.fs, nv=32)
-            wxo_abs = torch.mean(torch.abs(Wxo), dim=2)
+            wxo_abs = torch.mean(torch.abs(torch.tensor(Wxo)), dim=2)
             wxo_abs = torch.reshape(wxo_abs, (1, -1, self.op_size))
             wavelet_batch.append(wxo_abs)
 
@@ -100,6 +101,6 @@ class WaveletFrontEnd(AbsFrontend):
         input_feats = torch.cat(wavelet_batch, dim=0)
         feats_lens = torch.tensor([torch.div(x, self.hop_length, rounding_mode='floor') for x in input_lengths])
 
-        print('RETURNING WAVELET input_feats.shape', input_feats.shape, 'feat lens', feats_lens)
+        # print('RETURNING WAVELET input_feats.shape', input_feats.shape, 'feat lens', feats_lens)
 
         return input_feats, feats_lens

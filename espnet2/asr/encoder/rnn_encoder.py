@@ -105,6 +105,9 @@ class RNNEncoder(AbsEncoder):
 
         current_states = []
         for module, prev_state in zip(self.enc, prev_states):
+            print('xs pad', xs_pad, 'ilens', ilens)
+            xs_pad = xs_pad.cpu()
+
             xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
             current_states.append(states)
 
