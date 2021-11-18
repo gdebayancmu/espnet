@@ -38,7 +38,7 @@ class WaveletFrontEnd(AbsFrontend):
         self.fs = fs
         self.win_length = win_length
         self.hop_length = hop_length
-        self.op_size = 229  # Currently Hardcoded
+        self.op_size = 221  # Currently Hardcoded
 
     def output_size(self) -> int:
         return self.op_size
@@ -91,8 +91,10 @@ class WaveletFrontEnd(AbsFrontend):
 
         wavelet_batch = []
         for batch in range(0, batch_size):
+            torch.cuda.empty_cache()
             framed_signal = self.frame_with_overlap(input[batch], Nw=self.win_length, Nsh=self.hop_length)
             Wxo, dWx =  cwt(framed_signal, fs=self.fs, nv=32)
+            # print('wxo size', Wxo.shape)
             wxo_abs = torch.mean(torch.abs(torch.tensor(Wxo)), dim=2)
             wxo_abs = torch.reshape(wxo_abs, (1, -1, self.op_size))
             wavelet_batch.append(wxo_abs)
