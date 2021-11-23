@@ -74,6 +74,7 @@ class DefaultFrontend(AbsFrontend):
             fmax=fmax,
             htk=htk,
         )
+        print("SELF LOGMEL", self.logmel)
         self.n_mels = n_mels
 
     def output_size(self) -> int:
@@ -112,6 +113,8 @@ class DefaultFrontend(AbsFrontend):
         # 5. Feature transform e.g. Stft -> Log-Mel-Fbank
         # input_power: (Batch, [Channel,] Length, Freq)
         #       -> input_feats: (Batch, Length, Dim)
+        # print("calling LOGMEL @!!!!!", self.logmel)
+
         input_feats, _ = self.logmel(input_power, feats_lens)
 
         return input_feats, feats_lens

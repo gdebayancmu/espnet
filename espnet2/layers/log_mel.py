@@ -48,7 +48,12 @@ class LogMel(torch.nn.Module):
         # Note(kamo): The mel matrix of librosa is different from kaldi.
         melmat = librosa.filters.mel(**_mel_options)
         # melmat: (D2, D1) -> (D1, D2)
-        self.register_buffer("melmat", torch.from_numpy(melmat.T).float())
+        # print("In LOG MEL --------------------")
+        # self.register_buffer("melmat", torch.from_numpy(melmat.T).float())
+        self.melmat = torch.tensor((melmat.T), requires_grad=True, dtype = torch.float)
+        # self.melmat = self.melmat.to("cuda")
+        # if self.train:
+        #     self.melmat = self.melmat.to("cuda")            
 
     def extra_repr(self):
         return ", ".join(f"{k}={v}" for k, v in self.mel_options.items())
@@ -59,6 +64,10 @@ class LogMel(torch.nn.Module):
         ilens: torch.Tensor = None,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         # feat: (B, T, D1) x melmat: (D1, D2) -> mel_feat: (B, T, D2)
+        # print('feat', feat)
+        # print('melmat', self.melmat)
+        if feat.is_cuda:
+            self.melmat = self.melmat.to("cuda")
         mel_feat = torch.matmul(feat, self.melmat)
         mel_feat = torch.clamp(mel_feat, min=1e-10)
 
